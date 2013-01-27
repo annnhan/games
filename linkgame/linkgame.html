@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>连连看aaaaa</title>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="css/common.css" media="all">
+<style type="text/css">
+    body{ text-align: center;}
+    #game-box{ margin: 70px auto; width: 1120px;}
+    #game-box img{
+        font: left;
+        width: 68px;
+        height: 68px;
+        margin: 5px 5px 0 5px;
+        border: 1px solid #000000;
+    }
+    #game-box img:hover{
+        border: 1px solid #ffffff;
+    }
+    #game-box img.active{
+        border: 1px solid green;
+    }
+</style>
+<script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript">
+var arr = 'chendongyu,chenshaoding,chenshuai,hanan,lichunfeng,lihaixing,litingmiao,liuliu,lixianjing,moxiyun,wangbo,wangchunyuan,wanghuixiu,wangyuyan,wangzhenfa,wuliyao,wushuzhu,yangzhi,zhongbugui,zhongqing,zhushengbao'.split(',');
+var row = 6;//行
+var col = 14;//列
+var boxArr = {};//map对象
+var mapid = 'game-box';//map element id
+var gameBox;
+var startBox = null;//开始的格子
+var endBox = null;//结束的格子
+window.onload = init;
+
+//初始化
+function init(){
+    var str = ''
+    gameBox = document.getElementById(mapid);
+    for (var i=0; i<row; i++) {
+        for (var j=0; j<col; j++) {
+            str += '<img class="" onclick="choose(this);" id="x' + j + '_y' + i + '" src="img/blank.gif">'
+        }
+    }
+    gameBox.innerHTML = str;
+    pushBoxArr();
+    toHTML();
+    console.log(boxArr);
+}
+
+//获取坐标
+function getPosition () {
+    var x, y;
+    (function () {
+        x = parseInt(Math.random() * col);
+        y = parseInt(Math.random() * row);
+        if ( ('x'+x+'_y'+y) in boxArr ) {
+            arguments.callee();
+        }
+    })();
+    return {x:x, y:y}
+}
+
+//创建格子
+function CearteBox (name) {
+    var p = getPosition();
+    this.name = name;
+    this.x = p.x;
+    this.y = p.y;
+    this.love = 0;
+    switch (name){
+        case 'hanan':
+        case 'litingmiao':
+            this.love = 1;
+            break;
+        case 'wanghuixiu':
+        case 'wushuzhu':
+        case 'wangbo':
+            this.love = 2;
+            break;
+        case 'lixianjing':
+        case 'zhushengbao':
+            this.love = 3;
+            break;
+        case 'zhongbugui':
+        case 'zhongqing':
+            this.love = 4;
+            break;
+    }
+}
+
+//push格子数组
+function pushBoxArr () {
+    var index = 0;
+    var last = arr.length - 1;
+    for (var i=0; i<row; i++) {
+        for (var j=0; j<col; j++) {
+            var a = new CearteBox(arr[index]);
+            boxArr['x'+ a.x + '_y'+ a.y] = a;
+            if(index===last){
+                index = 0;
+            }else{
+                index += 1;
+            }
+        }
+    }
+
+}
+
+//初始化html
+function toHTML (){
+    for (var i in boxArr) {
+        document.getElementById(i).src = 'img/' + boxArr[i].name + '.jpg';
+    }
+}
+
+//choose
+function choose (el) {
+    if (this.src=='img/blank.gif') {
+        return;
+    }
+    if (startBox==null || startBox==el.id) {
+        startBox = el.id;
+        el.className = 'active';
+    }else{
+        endBox = el.id;
+    }
+//    for(var i = 0, imgs = gameBox.getElementsByTagName('img'), len = imgs.length; i < len; i++){
+//        if (imgs[i].className == 'active') {
+//            imgs[i].className = '';
+//        }
+//    }
+}
+
+</script>
+</head>
+<body>
+    <div id="game-box">
+
+    </div>
+</body>
+</html>
