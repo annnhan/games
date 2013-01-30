@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>qh</title>
+<title>琼海老乡连连看</title>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="css/common.css" media="all">
 <style type="text/css">
     body {
         text-align: center;
     }
+    .text {text-align: center; margin-top: 60px; color: #fff;}
 
     #game-box {
         margin: 60px auto;
@@ -21,7 +22,7 @@
         border: 1px solid #000000;
     }
 
-    #game-box img:hover {
+    #game-box img.hover {
         border: 1px solid #ffffff;
     }
 
@@ -33,7 +34,6 @@
         position: absolute;
     }
 </style>
-<script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
 <script type="text/javascript">
     var byId = function (id) {
         return document.getElementById(id);
@@ -259,7 +259,7 @@
             byId(a.position).src = byId(d.position).src ='img/blank.gif';
             byId(a.position).className = byId(d.position).className = '';
             if (boxsLength<=0) {
-                alert(亲，你赢了！好腻害啊。欢迎在北京的琼海老乡加群：58820899)；
+                alert('亲，你赢了！好腻害啊。欢迎在北京的琼海老乡加群：58820899');
             }
         }
         setTimeout(hideLine, 300);
@@ -334,7 +334,8 @@
 </script>
 </head>
 <body>
-<div id="game-box">
+<div id="game-box" class="clearfix">
 </div>
+<p class="text" style="">阿安提示：亲属、情侣之间也可以连哦，你都晓得他们是那些吗？黑喂狗！ </p>
 </body>
 </html>
