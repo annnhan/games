@@ -9,6 +9,7 @@
         text-align: center;
     }
     .text {text-align: center; margin-top: 60px; color: #fff;}
+    .agin {text-align: center; margin-top: 60px; color: #fff;}
 
     #game-box {
         margin: 60px auto;
@@ -42,17 +43,22 @@
     var gameBox;
     var mapid = 'game-box';//map element id
     var arr = 'chendongyu,chenshaoding,chenshuai,hanan,lichangmao,lichunfeng,lihaixing,litingmiao,liuliu,lixianjing,moxiyun,wangbo,wangchunyuan,wanghuixiu,wangyuyan,wangzhenfa,wuliyao,wushuzhu,yangzhi,zhongbugui,zhongqing,zhushengbao'.split(',');
-    var h = 8;//高
-    var w = 11;//宽
+    var h = 8;  //高
+    var w = 11; //宽
     var boxsLength = h*w;
-    var boxArr = {};//map对象
-    var startBox = '';//开始的格子
-    var endBox = '';//结束的格子
+    var boxArr = {};    //map对象
+    var startBox = '';  //开始的格子
+    var endBox = '';    //结束的格子
     window.onload = init;
 
     //初始化
     function init() {
-        var str = ''
+        byId('agin').style.display = 'none';
+        boxsLength = h*w;
+        boxArr = {};
+        startBox = '';
+        endBox = '';
+        var str = '';
         gameBox = byId(mapid);
         for (var i = 0; i < h; i++) {
             for (var j = 0; j < w; j++) {
@@ -260,6 +266,7 @@
             byId(a.position).className = byId(d.position).className = '';
             if (boxsLength<=0) {
                 alert('亲，你赢了！好腻害啊。欢迎在北京的琼海老乡加群：58820899');
+                byId('agin').style.display = 'block';
             }
         }
         setTimeout(hideLine, 300);
@@ -334,6 +341,7 @@
 </script>
 </head>
 <body>
+<p class="agin" id="agin" style="display: none;"><input type="button" onclick="init()" value="再来一把"></p>
 <div id="game-box" class="clearfix">
 </div>
 <p class="text" style="">阿安提示：亲属、情侣之间也可以连哦，你都晓得他们是那些吗？黑喂狗！ </p>
