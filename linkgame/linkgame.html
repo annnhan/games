@@ -1,142 +1,211 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>连连看</title>
+<title>qh</title>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="css/common.css" media="all">
 <style type="text/css">
-    body{ text-align: center;}
-    #game-box{ margin: 70px auto; width: 1120px;}
-    #game-box img{
-        font: left;
-        width: 68px;
-        height: 68px;
-        margin: 5px 5px 0 5px;
+    body {
+        text-align: center;
+    }
+
+    #game-box {
+        margin: 60px auto;
+    }
+
+    #game-box img {
+        float: left;
+        width: 58px;
+        height: 58px;
         border: 1px solid #000000;
     }
-    #game-box img:hover{
+
+    #game-box img:hover {
         border: 1px solid #ffffff;
     }
-    #game-box img.active{
-        border: 1px solid green;
+
+    #game-box img.active {
+        border: 1px solid #7fff00;
     }
 </style>
 <script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
 <script type="text/javascript">
-var arr = 'chendongyu,chenshaoding,chenshuai,hanan,lichunfeng,lihaixing,litingmiao,liuliu,lixianjing,moxiyun,wangbo,wangchunyuan,wanghuixiu,wangyuyan,wangzhenfa,wuliyao,wushuzhu,yangzhi,zhongbugui,zhongqing,zhushengbao'.split(',');
-var row = 6;//行
-var col = 14;//列
-var boxArr = {};//map对象
-var mapid = 'game-box';//map element id
-var gameBox;
-var startBox = null;//开始的格子
-var endBox = null;//结束的格子
-window.onload = init;
+    var byId = function (id) {
+        return document.getElementById(id);
+    }
+    var gameBox;
+    var mapid = 'game-box';//map element id
+    var arr = 'chendongyu,chenshaoding,chenshuai,hanan,lichangmao,lichunfeng,lihaixing,litingmiao,liuliu,lixianjing,moxiyun,wangbo,wangchunyuan,wanghuixiu,wangyuyan,wangzhenfa,wuliyao,wushuzhu,yangzhi,zhongbugui,zhongqing,zhushengbao'.split(',');
+    var h = 8;//高
+    var w = 11;//宽
+    var boxArr = {};//map对象
+    var startBox = '';//开始的格子
+    var endBox = '';//结束的格子
+    window.onload = init;
 
-//初始化
-function init(){
-    var str = ''
-    gameBox = document.getElementById(mapid);
-    for (var i=0; i<row; i++) {
-        for (var j=0; j<col; j++) {
-            str += '<img class="" onclick="choose(this);" id="x' + j + '_y' + i + '" src="img/blank.gif">'
+    //初始化
+    function init() {
+        var str = ''
+        gameBox = byId(mapid);
+        for (var i = 0; i < h; i++) {
+            for (var j = 0; j < w; j++) {
+                str += '<img class="" onclick="choose(this);" id="t' + i + '_l' + j + '" src="img/blank.gif">'
+            }
+        }
+        gameBox.innerHTML = str;
+        gameBox.style.width = w * 60 + 'px';
+        pushBoxArr();
+        toHTML();
+
+        console.log(boxArr);
+    }
+
+    // 获取坐标
+    function getPosition() {
+        var t, f;
+        (function () {
+            t = parseInt(Math.random() * h);
+            l = parseInt(Math.random() * w);
+            if (('t' + t + '_l' + l) in boxArr) {
+                arguments.callee();
+            }
+        })();
+        return {t:t, l:l}
+    }
+
+    // 创建格子
+    function CearteBox(name) {
+        var p = getPosition();
+        this.name = name;
+        this.t = p.t;
+        this.l = p.l;
+        this.position = 't' + p.t + '_l' + p.l;
+        this.love = 0;
+        switch (name) {
+            case 'hanan':
+            case 'litingmiao':
+                this.love = 1;
+                break;
+            case 'wanghuixiu':
+            case 'wushuzhu':
+            case 'wangbo':
+                this.love = 2;
+                break;
+            case 'lixianjing':
+            case 'zhushengbao':
+                this.love = 3;
+                break;
+            case 'zhongbugui':
+            case 'zhongqing':
+                this.love = 4;
+                break;
         }
     }
-    gameBox.innerHTML = str;
-    pushBoxArr();
-    toHTML();
-    console.log(boxArr);
-}
 
-//获取坐标
-function getPosition () {
-    var x, y;
-    (function () {
-        x = parseInt(Math.random() * col);
-        y = parseInt(Math.random() * row);
-        if ( ('x'+x+'_y'+y) in boxArr ) {
-            arguments.callee();
-        }
-    })();
-    return {x:x, y:y}
-}
-
-//创建格子
-function CearteBox (name) {
-    var p = getPosition();
-    this.name = name;
-    this.x = p.x;
-    this.y = p.y;
-    this.love = 0;
-    switch (name){
-        case 'hanan':
-        case 'litingmiao':
-            this.love = 1;
-            break;
-        case 'wanghuixiu':
-        case 'wushuzhu':
-        case 'wangbo':
-            this.love = 2;
-            break;
-        case 'lixianjing':
-        case 'zhushengbao':
-            this.love = 3;
-            break;
-        case 'zhongbugui':
-        case 'zhongqing':
-            this.love = 4;
-            break;
-    }
-}
-
-//push格子数组
-function pushBoxArr () {
-    var index = 0;
-    var last = arr.length - 1;
-    for (var i=0; i<row; i++) {
-        for (var j=0; j<col; j++) {
-            var a = new CearteBox(arr[index]);
-            boxArr['x'+ a.x + '_y'+ a.y] = a;
-            if(index===last){
-                index = 0;
-            }else{
-                index += 1;
+    // push boxRrr
+    function pushBoxArr() {
+        var index = 0;
+        var last = arr.length - 1;
+        for (var i = 0; i < h; i++) {
+            for (var j = 0; j < w; j++) {
+                var a = new CearteBox(arr[index]);
+                boxArr['t' + a.t + '_l' + a.l] = a;
+                if (index === last) {
+                    index = 0;
+                } else {
+                    index += 1;
+                }
             }
         }
     }
 
-}
-
-//初始化html
-function toHTML (){
-    for (var i in boxArr) {
-        document.getElementById(i).src = 'img/' + boxArr[i].name + '.jpg';
+    // 初始化html
+    function toHTML() {
+        for (var i in boxArr) {
+            byId(i).src = 'img/' + boxArr[i].name + '.jpg';
+        }
     }
-}
 
-//choose
-function choose (el) {
-    if (this.src=='img/blank.gif') {
-        return;
-    }
-    if (startBox==null || startBox==el.id) {
-        startBox = el.id;
+    // choose
+    function choose(el) {
+        if (el.src == 'img/blank.gif') {
+            return;
+        }
         el.className = 'active';
-    }else{
-        endBox = el.id;
+        if (startBox == '') {
+            startBox = el.id;
+        } else {
+            endBox = el.id;
+            test(boxArr[startBox], boxArr[endBox]);
+        }
     }
-//    for(var i = 0, imgs = gameBox.getElementsByTagName('img'), len = imgs.length; i < len; i++){
-//        if (imgs[i].className == 'active') {
-//            imgs[i].className = '';
-//        }
-//    }
-}
+
+    // 判断是不是相同格子
+    function test(a, b) {
+        var isSame = function (a, b) {
+            if (a.name == b.name) {
+                return true;
+            } else {
+                if (a.love != 0 && b.love != 0) {
+                    if (a.love == b.love) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }(a, b);
+        if (isSame) {
+            go(a, b);
+        } else {
+            byId(startBox).className = '';
+            startBox = endBox;
+            endBox = '';
+        }
+    }
+
+    // 判断是否连通
+    function go(a, b) {
+        var a = a,
+                b = b,
+                temp,
+                canLink = false;
+
+        //同行
+        if (a.t == b.t) {
+            // 交换为未知，确保a在b的左边
+            if (a.l > b.l) {
+                temp = a;
+                a = b;
+                b = temp;
+            }
+
+            if (a.l - b.l == -1) {  // 相邻
+                kill(a, b);
+                link(a, b);
+            } else {
+            }
+        }
+    }
+
+    //干掉格子，删除boxArr中相应格子
+    function kill(a, b) {
+        boxArr[a.position] = null;
+        boxArr[b.position] = null;
+    }
+
+    // 连接
+    function link(a, b, c, d) {
+
+    }
+
 
 </script>
 </head>
 <body>
-    <div id="game-box">
-
-    </div>
+<div id="game-box">
+</div>
 </body>
 </html>
